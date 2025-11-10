@@ -10,8 +10,6 @@ from psycopg.rows import dict_row
 # That's why we have provided it!
 class DatabaseConnection:
     # VVV CHANGE BOTH OF THESE VVV
-    DEV_DATABASE_NAME = "BubblesBnB"
-    TEST_DATABASE_NAME = "BubblesBnB_Test"
     DEV_DATABASE_NAME = "bubbles_bnb"
     TEST_DATABASE_NAME = "bubbles_bnb_test"
 
