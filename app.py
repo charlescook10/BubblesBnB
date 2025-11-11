@@ -1,8 +1,9 @@
 import os
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect
 from lib.database_connection import get_flask_database_connection
 from lib.spaces_repository import SpaceRepository
 from lib.user_repository import UserRepository
+from lib.spaces import Space
 
 # Create a new Flask app
 app = Flask(__name__)
@@ -22,12 +23,9 @@ def get_spaces():
 
 @app.route('/approved', methods=['GET'])
 def get_approved_booking():
-    conn = get_flask_database_connection(app)
-    repo = SpaceRepository(conn)
 
-    spaces = repo.all()
+    return render_template('approved.html')
 
-    return render_template('approved.html', spaces=spaces)
 # @app.route('/<int:space_id>')
 # def individual_space(space_id):
 #     space = get_space(space_id)
@@ -43,6 +41,20 @@ def get_individual_space(space_id):
         return ("Not Found", 404)
     user = user_repo.find(space.user_id)
     return render_template("individual_space.html", space=space, user=user)
+
+@app.route('/spaces/<int:space_id>', methods=['PUT'])
+def put_booking():
+    conn = get_flask_database_connection(app)
+    repo = SpaceRepository(conn)
+
+    space = repo.find(id)
+
+    if space is None:
+        return ("Not Found", 404)
+
+    repo.update(Space(space.id, space.name, space.description, True, space.user_id))
+
+    return redirect('/approved')
 
 
 # These lines start the server if you run this file directly

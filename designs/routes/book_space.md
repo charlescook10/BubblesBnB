@@ -28,8 +28,8 @@ repo = SpacesRepository(db_conn)
 
 space = repo.find(id)
 
-spaces = repo.update()
-return render_template('approved.html')
+spaces = repo.update(space())
+return redirect('approved.html')
 """
 ```
 
