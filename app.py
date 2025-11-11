@@ -19,6 +19,16 @@ def get_spaces():
 
     return render_template('list_spaces.html', spaces=spaces)
 
+@app.route('/approved', methods=['GET'])
+def get_approved_booking():
+    conn = get_flask_database_connection(app)
+    repo = SpaceRepository(conn)
+
+    spaces = repo.all()
+
+    return render_template('approved.html', spaces=spaces)
+
+
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
 # if started in test mode.
