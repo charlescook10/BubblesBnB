@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spaces</title>
+    <title>{{ space.name }}</title>
 </head>
 <body>
-    <h1>Spaces</h1>
-    {% for space in spaces %}
-
+    <h1>{{ space.name }}</h1>
     <div class="spaces-listing">
         <p class="space-name">{{space.name}}</p>
         <p class="space-description">{{space.description}}</p>
-        <a class="space-link" href="{{ url_for('get_individual_space', space_id=space.id)}}">Go to Space</a>
+        <p class="space-price-per-night">{{space.price_per_night}}</p>
+        <p class="space-booking-flag">{{space.booking_flag}}</p>
+        <p class="user-name">{{user.name}}</p>
     </div>
 
-    {% endfor %}
 </body>
 </html>
