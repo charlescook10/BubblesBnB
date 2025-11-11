@@ -13,6 +13,9 @@
         <p class="space-price-per-night">{{space.price_per_night}}</p>
         <p class="space-booking-flag">{{space.booking_flag}}</p>
         <p class="user-name">{{user.name}}</p>
+        <form action="/spaces/{{space.id}}" method="POST">
+            <button id="booking-btn" type="submit">Book Here</button>
+        </form>        
     </div>
 
 </body>

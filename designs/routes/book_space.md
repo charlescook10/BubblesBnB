@@ -6,8 +6,8 @@
 _Include the HTTP method, the path, and any query or body parameters._
 
 ```
-# Spaces route
-GET /spaces
+# Book a space route
+PUT /book-space/<id>
 ```
 
 ## 2. Create Examples as Tests
@@ -19,16 +19,17 @@ _Remember to try out different parameter values._
 _Include the status code and the response body._
 
 ```python
-# EXAMPLE
 
-# GET /spaces
+# PUT /book-space/<id>
 #  Expected response (200 OK):
 """
 conn = get_flask_database_connection(app)
 repo = SpacesRepository(db_conn)
 
-spaces = repo.all()
-return render_template('artists/index.html', spaces=spaces)
+space = repo.find(id)
+
+spaces = repo.update(space())
+return redirect('approved.html')
 """
 ```
 
@@ -40,18 +41,15 @@ Here's an example for you to start with:
 
 ```python
 """
-GET /spaces
+PUT /book-space/<id>
   Expected response (200 OK):
 """
 def test_get_spaces(web_client):
   db_connection.seed('seeds/bubbles_bnb.sql')
 
-  page.goto(f"http://{test_web_address}/spaces")
+  page.goto(f"http://{test_web_address}/space/1")
 
-  spaces = page.locator('.spaces_listing')
-  expect(spaces).to_have_text([
-    'Test_Space_1', 'This is a description of Test_Space_1', '10.00'
-  ])
+
 
 ```
 
