@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 # GET /spaces
 # Returns the listings
-@app.route('/spaces', methods=['GET'])
+@app.route('/', methods=['GET'])
 def get_spaces():
     conn = get_flask_database_connection(app)
     repo = SpaceRepository(conn)
