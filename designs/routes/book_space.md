@@ -6,8 +6,8 @@
 _Include the HTTP method, the path, and any query or body parameters._
 
 ```
-# Spaces route
-GET /spaces
+# Book a space route
+PUT /book-space/<id>
 ```
 
 ## 2. Create Examples as Tests
@@ -19,15 +19,16 @@ _Remember to try out different parameter values._
 _Include the status code and the response body._
 
 ```python
-# EXAMPLE
 
-# GET /spaces
+# PUT /book-space/<id>
 #  Expected response (200 OK):
 """
 conn = get_flask_database_connection(app)
 repo = SpacesRepository(db_conn)
 
-spaces = repo.all()
+space = repo.find(id)
+
+spaces = repo.update()
 return render_template('artists/index.html', spaces=spaces)
 """
 ```
