@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spaces</title>
+</head>
+<body>
+    <h1>Spaces</h1>
+    {% for space in spaces %}
+
+    <div class="spaces-listing">
+        <p class="space-name">{{space.name}}</p>
+        <p class="space-description">{{space.description}}</p>
+        <a class="space-link" href="/space/{{space.id}}">Go to Space</a>
+    </div>
+
+    {% endfor %}
+</body>
+</html>
