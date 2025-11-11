@@ -9,7 +9,7 @@ GET /spaces
 def test_get_spaces(db_connection, page, test_web_address):
   db_connection.seed('seeds/bubbles_bnb.sql')
 
-  page.goto(f"http://{test_web_address}/spaces")
+  page.goto(f"http://{test_web_address}")
 
   space_names = page.locator('.space-name')
   space_descriptions = page.locator('.space-description')
