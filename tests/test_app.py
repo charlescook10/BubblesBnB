@@ -5,7 +5,9 @@ from playwright.sync_api import Page, expect
 """
 We can render the index page
 """
-def test_get_index(page, test_web_address):
+def test_get_index(db_connection, page, test_web_address):
+    # We seed
+    db_connection.seed("seeds/bubbles_bnb.sql")
     # We load a virtual browser and navigate to the /index page
     page.goto(f"http://{test_web_address}/index")
 
