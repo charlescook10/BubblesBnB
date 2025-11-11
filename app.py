@@ -42,8 +42,8 @@ def get_individual_space(space_id):
     user = user_repo.find(space.user_id)
     return render_template("individual_space.html", space=space, user=user)
 
-@app.route('/spaces/<int:space_id>', methods=['PUT'])
-def put_booking():
+@app.route('/spaces/<int:id>', methods=['POST'])
+def put_booking(id):
     conn = get_flask_database_connection(app)
     repo = SpaceRepository(conn)
 
@@ -52,7 +52,7 @@ def put_booking():
     if space is None:
         return ("Not Found", 404)
 
-    repo.update(Space(space.id, space.name, space.description, True, space.user_id))
+    repo.update(Space(space.id, space.name, space.description, space.price_per_night, True, space.user_id))
 
     return redirect('/approved')
 
