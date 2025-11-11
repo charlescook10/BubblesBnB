@@ -29,7 +29,7 @@ repo = SpacesRepository(db_conn)
 space = repo.find(id)
 
 spaces = repo.update()
-return render_template('artists/index.html', spaces=spaces)
+return render_template('approved.html')
 """
 ```
 
@@ -41,18 +41,15 @@ Here's an example for you to start with:
 
 ```python
 """
-GET /spaces
+PUT /book-space/<id>
   Expected response (200 OK):
 """
 def test_get_spaces(web_client):
   db_connection.seed('seeds/bubbles_bnb.sql')
 
-  page.goto(f"http://{test_web_address}/spaces")
+  page.goto(f"http://{test_web_address}/space/1")
 
-  spaces = page.locator('.spaces_listing')
-  expect(spaces).to_have_text([
-    'Test_Space_1', 'This is a description of Test_Space_1', '10.00'
-  ])
+
 
 ```
 
