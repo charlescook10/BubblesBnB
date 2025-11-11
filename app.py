@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, render_template
 from lib.database_connection import get_flask_database_connection
-from lib.spaces_repository import SpacesRepository
+from lib.spaces_repository import SpaceRepository
 
 # Create a new Flask app
 app = Flask(__name__)
@@ -21,9 +21,9 @@ def get_index():
 @app.route('/spaces', methods=['GET'])
 def get_index():
     conn = get_flask_database_connection(app)
-    repo = SpacesRepository(conn)
+    repo = SpaceRepository(conn)
 
-    spaces = repo.findAll()
+    spaces = repo.all()
 
     return render_template('list_spaces.html', spaces=spaces)
 
