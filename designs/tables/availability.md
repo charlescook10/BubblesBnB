@@ -37,7 +37,7 @@ space_id: int
 ```sql
 -- EXAMPLE
 -- file: availabilities_table.sql
-
+a
 -- Replace the table name, column names and types.
 
 CREATE TABLE availabilities (
