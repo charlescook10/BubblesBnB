@@ -17,7 +17,10 @@
         {% endif %}
         <a class="space-link" href="{{ url_for('get_individual_space', space_id=space.id)}}">Go to Space</a>
     </div>
-
     {% endfor %}
+    
+    <form action="/user_listings.html" method="POST">
+            <button id="listings-btn" type="submit">View my listings</button>
+    </form> 
 </body>
 </html>

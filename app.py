@@ -92,10 +92,19 @@ def new_listing():
             user_id=user_id
         )
 
-        created_space = repo.add_new_listing(new_space)
+        repo.add_new_listing(new_space)
+        return redirect(url_for('user_listings', user_id=user_id))
 
-        return render_template('add_new_listings.html', space=created_space)
+        # created_space = repo.add_new_listing(new_space)
+        # return render_template('add_new_listings.html', space=created_space)
+    
 
+@app.route('/user/<int:user_id>/listings')
+def user_listings(user_id):
+    conn = get_flask_database_connection(app)
+    repo = SpaceRepository(conn)
+    listings = repo.get_listings_by_user(user_id)
+    return render_template('user_listings.html', listings=listings, user_id=user_id)
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
