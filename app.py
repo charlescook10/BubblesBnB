@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from lib.database_connection import get_flask_database_connection
 from lib.spaces_repository import SpaceRepository
 from lib.user_repository import UserRepository
+
 from lib.user import User
 from lib.spaces import Space
 
@@ -87,11 +88,14 @@ def login():
 @app.route('/', methods=['GET'])
 def get_spaces():
     conn = get_flask_database_connection(app)
-    repo = SpaceRepository(conn)
+    space_repo = SpaceRepository(conn)
+    user_repo = UserRepository(conn)
 
-    spaces = repo.all()
+    spaces = space_repo.all()
+    users = user_repo.all()
+    
 
-    return render_template('list_spaces.html', spaces=spaces)
+    return render_template('list_spaces.html', users=users, spaces=spaces)
 
 @app.route('/approved', methods=['GET'])
 def get_approved_booking():
@@ -125,14 +129,16 @@ def put_booking(id):
 
 # GET /user/spaces/1
 # Returns the listings
-@app.route('/user/spaces/<int:id>', methods=['GET'])
-def get_all_spaces_for_one_user(id):
+@app.route('/user/spaces/<int:user_id>', methods=['GET'])
+def get_all_spaces_for_one_user(user_id):
     conn = get_flask_database_connection(app)
     space_repo = SpaceRepository(conn)
     user_repo = UserRepository(conn)
 
-    spaces = space_repo.find_by_user(id)
-    users = user_repo.find(id)
+    spaces = space_repo.find_by_user(user_id)
+    users = user_repo.find(user_id)
+    if spaces is None:
+        return ("Not Found", 404)
     return render_template('list_spaces_all_of_user.html', users=users, spaces=spaces)
 
 
