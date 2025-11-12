@@ -30,3 +30,15 @@ def test_get_individual_space(db_connection, page, test_web_address):
 
     expect(book_btn).to_have_attribute('type', 'submit')
     expect(book_btn).to_have_text('Book Here')
+    
+"""
+GET /approved
+returns the correctly formatted webpage
+"""
+def test_approval_page(db_connection, page, test_web_address):
+    db_connection.seed("seeds/bubbles_bnb.sql")
+    page.goto(f"http://{test_web_address}/approved")
+    heading = page.locator("h1")
+    expect(heading).to_have_text('This booking has been approved')
+    expect(page.get_by_text("Back to all listings")).to_be_visible();
+    expect(page.get_by_role("link", name="Back to all listings"))
