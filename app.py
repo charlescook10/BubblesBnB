@@ -1,9 +1,11 @@
 import os
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, url_for, flash, current_app
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from lib.database_connection import get_flask_database_connection
 from lib.spaces_repository import SpaceRepository
 from lib.user_repository import UserRepository
 from lib.spaces import Space
+from lib.user import User
 
 # Create a new Flask app
 app = Flask(__name__)
@@ -12,6 +14,35 @@ app = Flask(__name__)
 
 # GET /spaces
 # Returns the listings
+
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    connection = get_flask_database_connection(app)
+    repo = UserRepository(connection)
+    if request.method == "POST": 
+        name = request.form.get("name", "").strip()
+        username = request.form.get("username", "").strip().lower()
+        password = request.form.get("password", "")
+
+        if not name or not username or not password: 
+            flash("All fields are required", "Error")
+            return render_template('register.html')
+        if len(password) < 8: 
+            flash("Password might be at least 8 characters long")
+        
+        existing = repo.get_username()
+        if username in existing: 
+            flash("Username already taken.", "Error")
+        
+        new_user = User(name=name, username=username, password=password)
+        repo.add(new_user)
+        flash("Account created. Please login!", "Success")
+        return redirect(url_for("login"))
+    
+    return render_template("register.html")
+
+
+
 @app.route('/', methods=['GET'])
 def get_spaces():
     conn = get_flask_database_connection(app)
@@ -25,11 +56,6 @@ def get_spaces():
 def get_approved_booking():
 
     return render_template('approved.html')
-
-# @app.route('/<int:space_id>')
-# def individual_space(space_id):
-#     space = get_space(space_id)
-#     return render_template('individual_space.html', space=space)
 
 @app.route("/spaces/<int:space_id>")
 def get_individual_space(space_id):
