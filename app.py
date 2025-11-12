@@ -19,8 +19,9 @@ def get_spaces():
     repo = SpaceRepository(conn)
 
     spaces = repo.all()
+    user_id = 1
 
-    return render_template('list_spaces.html', spaces=spaces)
+    return render_template('list_spaces.html', spaces=spaces, user_id=user_id)
 
 @app.route('/approved', methods=['GET'])
 def get_approved_booking():
@@ -93,18 +94,18 @@ def new_listing():
         )
 
         repo.add_new_listing(new_space)
-        return redirect(url_for('user_listings', user_id=user_id))
+        return redirect(url_for('get_all_spaces_for_one_user', id=user_id))
 
         # created_space = repo.add_new_listing(new_space)
         # return render_template('add_new_listings.html', space=created_space)
     
 
-@app.route('/user/<int:user_id>/listings')
-def user_listings(user_id):
-    conn = get_flask_database_connection(app)
-    repo = SpaceRepository(conn)
-    listings = repo.get_listings_by_user(user_id)
-    return render_template('user_listings.html', listings=listings, user_id=user_id)
+# @app.route('/user/spaces/<int:user_id>')
+# def user_listings(user_id):
+#     conn = get_flask_database_connection(app)
+#     repo = SpaceRepository(conn)
+#     listings = repo.find_by_user(user_id)
+#     return render_template('user_listings.html', listings=listings, user_id=user_id)
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
