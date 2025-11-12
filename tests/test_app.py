@@ -20,7 +20,8 @@ from playwright.sync_api import Page, expect
 def test_get_individual_space(db_connection, page, test_web_address):
     db_connection.seed("seeds/bubbles_bnb.sql")
     page.goto(f"http://{test_web_address}/spaces/1")
-
+    
+    
     expect(page.locator('.space-name')).to_have_text('Test_Space_1')
     expect(page.locator('.space-description')).to_have_text('This is a description of Test_Space_1')
     expect(page.locator('.space-price-per-night')).to_have_text('10.0')
@@ -30,6 +31,21 @@ def test_get_individual_space(db_connection, page, test_web_address):
 
     expect(book_btn).to_have_attribute('type', 'submit')
     expect(book_btn).to_have_text('Book Here')
+    
+
+"""
+GET /spaces/user_id_1
+When we call a user_id we get a list of spaces 
+for that specific user
+"""
+def test_get__all_spaces_for_one_user(db_connection, page, test_web_address):
+    db_connection.seed("seeds/bubbles_bnb.sql")
+    page.goto(f"http://{test_web_address}/spaces/1")
+    div_tags = page.locator('div')
+    expect(div_tags).to_have_text(["Test_Space_1 This is a description of Test_Space_1"]
+
+# Above test does not work
+
     
 """
 GET /approved
