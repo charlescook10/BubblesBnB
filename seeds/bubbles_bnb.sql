@@ -28,7 +28,7 @@ CREATE SEQUENCE IF NOT EXISTS availabilities_id_seq;
 CREATE TABLE availabilities (
   id SERIAL PRIMARY KEY,
   date date,
-  status TEXT,
+  status TEXT default 'Available',
   space_id int,
   constraint fk_space foreign key(space_id)
     references spaces(id)
@@ -45,7 +45,7 @@ INSERT INTO spaces (name, description, price_per_night, booked_flag, user_id) VA
 
 
 
-INSERT INTO availabilities (date, status, space_id) VALUES ('2025-08-11', 'Booked', 1);
+INSERT INTO availabilities (date, space_id) VALUES ('2025-08-11', 1);
 INSERT INTO availabilities (date, status, space_id) VALUES ('2026-01-01', 'Available', 2);
 INSERT INTO availabilities (date, status, space_id) VALUES ('2025-09-21', 'Booked', 3);
 INSERT INTO availabilities (date, status, space_id) VALUES ('2026-02-01', 'Available', 4);
