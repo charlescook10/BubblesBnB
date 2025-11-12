@@ -40,11 +40,10 @@ for that specific user
 """
 def test_get__all_spaces_for_one_user(db_connection, page, test_web_address):
     db_connection.seed("seeds/bubbles_bnb.sql")
-    page.goto(f"http://{test_web_address}/spaces/1")
-    div_tags = page.locator('div')
-    expect(div_tags).to_have_text(["Test_Space_1 This is a description of Test_Space_1"])
+    page.goto(f"http://{test_web_address}/user/spaces/1")
 
-# Above test does not work
+    expect(page.locator('.space-name').nth(0)).to_have_text('Test_Space_1')
+    expect(page.locator('.space-description').nth(0)).to_have_text('This is a description of Test_Space_1')
 
     
 """
@@ -56,5 +55,5 @@ def test_approval_page(db_connection, page, test_web_address):
     page.goto(f"http://{test_web_address}/approved")
     heading = page.locator("h1")
     expect(heading).to_have_text('This booking has been approved')
-    expect(page.get_by_text("Back to all listings")).to_be_visible();
-    expect(page.get_by_role("link", name="Back to all listings"))
+    expect(page.get_by_text("Go back to listing")).to_be_visible();
+    expect(page.get_by_role("link", name="Go back to listing"))
