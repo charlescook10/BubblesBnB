@@ -27,3 +27,6 @@ def test_get_spaces(db_connection, page, test_web_address):
     'This is a description of Test_Space_3',
     'This is a description of Test_Space_4' 
     ])
+  
+  def test_post_spaces():
+    pass

@@ -1,0 +1,31 @@
+git <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a new listing here</title>
+    <h1>List a new space below</h1>
+</head>
+<body>
+<form action="/new_listing" method="post">
+  <label for="name">Name</label>
+  <input type="text" name="name" id="name" required>
+
+  <label for="description">Description</label>
+  <textarea name="description" id="description" required></textarea>
+
+  <label for="price_per_night">Price per night (£)</label>
+  <input type="number" step="0.01" name="price_per_night" id="price_per_night" required>
+
+  <label for="available_from">Available from (DD/MM/YY)</label>
+  <input type="date" name="available_from" id="available_from">
+
+  <label for="available_to">Available to (DD/MM/YY)</label>
+  <input type="date" name="available_to" id="available_to">
+
+  <button type="submit">List my Space</button>
+</form>
+
+
+</body>
+</html>

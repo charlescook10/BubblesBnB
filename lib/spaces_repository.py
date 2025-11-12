@@ -24,6 +24,34 @@ class SpaceRepository:
         row = rows[0]
         return Space(row["id"], row["name"], row["description"], row["price_per_night"], row["booked_flag"], row["user_id"])
     
+    
+    def add_new_listing(self, space):
+        rows = self._connection.execute(
+            """
+            INSERT INTO spaces (name, description, price_per_night, booked_flag, user_id)
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING id, name, description, price_per_night, booked_flag, user_id;
+            """,
+            [space.name, space.description, space.price_per_night, space.booked_flag, space.user_id]
+        )
+
+        row = rows[0]
+        return Space(
+            row["id"],
+            row["name"],
+            row["description"],
+            row["price_per_night"],
+            row["booked_flag"],
+            row["user_id"]
+        )
+
+    
+    
+    def delete_space(self, user_id):
+        self._connection.execute(
+            'DELETE FROM spaces WHERE id = %s', [user_id])
+        return None
+    
     def find_by_user(self, user_id):
         rows = self._connection.execute('SELECT * from spaces WHERE user_id = %s', [user_id])
         spaces = []
