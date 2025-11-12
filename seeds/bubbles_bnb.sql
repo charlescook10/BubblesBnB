@@ -49,3 +49,7 @@ INSERT INTO availabilities (date, status, space_id) VALUES ('2025-08-11', 'Booke
 INSERT INTO availabilities (date, status, space_id) VALUES ('2026-01-01', 'Available', 2);
 INSERT INTO availabilities (date, status, space_id) VALUES ('2025-09-21', 'Booked', 3);
 INSERT INTO availabilities (date, status, space_id) VALUES ('2026-02-01', 'Available', 4);
+INSERT INTO availabilities (date, status, space_id) VALUES ('2027-02-01', 'Available', 4);
+INSERT INTO availabilities (date, status, space_id) VALUES ('2026-05-30', 'Booked', 3);
+INSERT INTO availabilities (date, status, space_id) VALUES ('2026-07-01', 'Available', 2);
+INSERT INTO availabilities (date, status, space_id) VALUES ('2026-04-14', 'Booked', 1);
