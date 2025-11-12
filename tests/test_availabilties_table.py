@@ -1,3 +1,6 @@
+import datetime
+
+
 # This is an example of how to use the DatabaseConnection class
 
 """
@@ -15,9 +18,9 @@ def test_database_connection(db_connection):
 
     # Assert that the results are what we expect
     assert result == [
-        {"id": 1, "date": "2025-08-11", "status":'Booked', "space_id":1 },
-       {"id": 2, "date": "2026-01-01", "status":'Available', "space_id":2 },
-       {"id": 3, "date": "2025-09-21", "status":'Booked', "space_id":3 },
-       {"id": 4, "date": "2026-02-01", "status":'Available', "space_id":4 }
+        {"id": 1, "date": datetime.date(2025, 8, 11), "status":'Booked', "space_id":1 },
+       {"id": 2, "date": datetime.date(2026,1, 1), "status":'Available', "space_id":2 },
+       {"id": 3, "date": datetime.date(2025,9, 21), "status":'Booked', "space_id":3 },
+       {"id": 4, "date": datetime.date(2026, 2, 1), "status":'Available', "space_id":4 }
        
     ]
