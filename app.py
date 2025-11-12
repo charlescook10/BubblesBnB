@@ -1,15 +1,38 @@
 import os
 from flask import Flask, request, render_template, redirect, url_for, flash, current_app
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from lib.database_connection import get_flask_database_connection
 from lib.spaces_repository import SpaceRepository
 from lib.user_repository import UserRepository
-from lib.spaces import Space
 from lib.user import User
+from lib.spaces import Space
 
 # Create a new Flask app
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"] 
 
+class LoginUser(UserMixin):
+    def __init__(self, user: User):
+        self._user = user
+        self.id = str(user.id)
+        self.name = getattr(user, "name", "")
+        self.username = user.username
+        self.password = user.password
+
+    @property
+    def domain(self) -> User:
+        return self._user
+
+login_manager = LoginManager(app)
+login_manager.login_view = "login"
+
+@login_manager.user_loader
+def load_user(user_id: str):
+    connection = get_flask_database_connection(app)
+    repo = UserRepository(connection)
+    u = repo.find(int(user_id))
+    return LoginUser(u) if u else None  
 # == Your Routes Here ==
 
 # GET /spaces
@@ -25,22 +48,40 @@ def register():
         password = request.form.get("password", "")
 
         if not name or not username or not password: 
-            flash("All fields are required", "Error")
+            flash("All fields are required", "error")
             return render_template('register.html')
         if len(password) < 8: 
             flash("Password might be at least 8 characters long")
-        
-        existing = repo.get_username()
+
+        usernames = repo.all()
+        existing = ", ".join([user.username for user in usernames])
         if username in existing: 
-            flash("Username already taken.", "Error")
+            flash("Username already taken.", "error")
         
-        new_user = User(name=name, username=username, password=password)
+        pw_hash = generate_password_hash(password)
+        new_user = User(id=None, name=name, username=username, password=pw_hash)
         repo.add(new_user)
-        flash("Account created. Please login!", "Success")
+        flash("Account created. Please login!", "success")
         return redirect(url_for("login"))
     
     return render_template("register.html")
 
+@app.route("/login", methods=['GET', 'POST'])
+def login():
+    connection = get_flask_database_connection(app)
+    repo = UserRepository(connection)
+    if request.method == "POST":
+        username = request.form.get("username", "").strip().lower()
+        password = request.form.get("password", "")
+        users = repo.all()
+        # find the user object that matches the submitted username
+        user = next((u for u in users if u.username == username), None)
+        if user and check_password_hash(user.password, password):
+            login_user(LoginUser(user))
+            flash("Welcome!", "success")
+            return redirect(url_for("get_spaces"))
+        flash("Invalid username or password!", "error")
+    return render_template("login.html")
 
 
 @app.route('/', methods=['GET'])
@@ -81,6 +122,18 @@ def put_booking(id):
     repo.update(Space(space.id, space.name, space.description, space.price_per_night, True, space.user_id))
 
     return redirect('/approved')
+
+# GET /user/spaces/1
+# Returns the listings
+@app.route('/user/spaces/<int:id>', methods=['GET'])
+def get_all_spaces_for_one_user(id):
+    conn = get_flask_database_connection(app)
+    space_repo = SpaceRepository(conn)
+    user_repo = UserRepository(conn)
+
+    spaces = space_repo.find_by_user(id)
+    users = user_repo.find(id)
+    return render_template('list_spaces_all_of_user.html', users=users, spaces=spaces)
 
 
 # These lines start the server if you run this file directly
