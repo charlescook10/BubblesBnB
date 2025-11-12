@@ -2,6 +2,7 @@ import os
 from flask import Flask, request, render_template, redirect, url_for, flash, current_app
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import Flask, request, render_template, redirect, url_for
 from lib.database_connection import get_flask_database_connection
 from lib.spaces_repository import SpaceRepository
 from lib.user_repository import UserRepository
@@ -134,6 +135,33 @@ def get_all_spaces_for_one_user(id):
     spaces = space_repo.find_by_user(id)
     users = user_repo.find(id)
     return render_template('list_spaces_all_of_user.html', users=users, spaces=spaces)
+
+
+@app.route('/new_listing', methods=['GET', 'POST'])
+def new_listing():
+    if request.method == 'GET':
+        return render_template('add_new_listings.html')
+    else:
+        conn = get_flask_database_connection(app)
+        repo = SpaceRepository(conn)
+
+        name = request.form['name']
+        description = request.form['description']
+        price_per_night = float(request.form['price_per_night'])
+        user_id = 1
+
+        new_space = Space(
+            id=None,
+            name=name,
+            description=description,
+            price_per_night=price_per_night,
+            booked_flag=False,
+            user_id=user_id
+        )
+
+        created_space = repo.add_new_listing(new_space)
+
+        return render_template('add_new_listings.html', space=created_space)
 
 
 # These lines start the server if you run this file directly
