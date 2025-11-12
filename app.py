@@ -3,6 +3,7 @@ from flask import Flask, request, render_template, redirect
 from lib.database_connection import get_flask_database_connection
 from lib.spaces_repository import SpaceRepository
 from lib.user_repository import UserRepository
+from lib.user import User
 from lib.spaces import Space
 
 # Create a new Flask app
@@ -55,6 +56,18 @@ def put_booking(id):
     repo.update(Space(space.id, space.name, space.description, space.price_per_night, True, space.user_id))
 
     return redirect('/approved')
+
+# GET /user/spaces/1
+# Returns the listings
+@app.route('/user/spaces/<int:id>', methods=['GET'])
+def get_all_spaces_for_one_user(id):
+    conn = get_flask_database_connection(app)
+    space_repo = SpaceRepository(conn)
+    user_repo = UserRepository(conn)
+
+    spaces = space_repo.find_by_user(id)
+    users = user_repo.find(id)
+    return render_template('list_spaces_all_of_user.html', users=users, spaces=spaces)
 
 
 # These lines start the server if you run this file directly

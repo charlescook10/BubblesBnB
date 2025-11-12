@@ -29,3 +29,14 @@ def test_update_a_record(db_connection):
     updated_space = repo.update(new_space)
 
     assert updated_space ==  Space(4, 'Test_Space_New_Name', 'This is a description of Test_Space_1', 10.0, False, 2)
+
+def test_gets_all_spaces_from_user_id(db_connection):
+    db_connection.seed("seeds/bubbles_bnb.sql")
+    repo = SpaceRepository(db_connection)
+
+    spaces_list = repo.find_by_user(1)
+
+    assert spaces_list == [
+        Space(1, "Test_Space_1", "This is a description of Test_Space_1", 10.0, False, 1),
+        Space(2, "Test_Space_2", "This is a description of Test_Space_2", 10.0, False, 1)
+    ]
