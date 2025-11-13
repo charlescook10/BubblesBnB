@@ -84,19 +84,22 @@ def register():
 def login():
     connection = get_flask_database_connection(app)
     repo = UserRepository(connection)
-    if request.method == "POST":
-        username = request.form.get("username", "").strip().lower()
-        password = request.form.get("password", "")
-        users = repo.all()
-        # find the user object that matches the submitted username
-        user = next((u for u in users if u.username == username), None)
-        if user and check_password_hash(user.password, password):
-            login_user(LoginUser(user))
-            flash("Welcome!", "success")
-            return redirect(url_for("get_spaces"))
-        else:
-            flash("Invalid username or password", "error")
-            return render_template("login_failed.html")
+    if current_user.is_authenticated:
+        return redirect(url_for('my_account'))
+    else:
+        if request.method == "POST":
+            username = request.form.get("username", "").strip().lower()
+            password = request.form.get("password", "")
+            users = repo.all()
+            # find the user object that matches the submitted username
+            user = next((u for u in users if u.username == username), None)
+            if user and check_password_hash(user.password, password):
+                login_user(LoginUser(user))
+                flash("Welcome!", "success")
+                return redirect(url_for("get_spaces"))
+            else:
+                flash("Invalid username or password", "error")
+                return render_template("login_failed.html")
     return render_template("login.html")
 
 @app.route('/dashboard')
