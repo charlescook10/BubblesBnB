@@ -26,6 +26,11 @@ class UserRepository:
     #         item = User(row["username"])
     #         usernames.append(item)
     #     return usernames
+
+    # def get_username_from_id(self, id):
+    #     rows = self._connection.execute('SELECT username FROM users JOIN spaces ON users.id = spaces.user_id WHERE users.id = %s', [id])
+    #     row = rows[0]
+    #     return User(row["username"])
     
     def add(self, user):
         rows = self._connection.execute('INSERT INTO users ( name, username, password ) VALUES (%s, %s, %s) RETURNING id', [user.name, user.username, user.password])
