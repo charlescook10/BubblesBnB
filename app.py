@@ -39,6 +39,10 @@ def load_user(user_id: str):
 def index():
     return redirect(url_for('get_spaces' if current_user.is_authenticated else 'login'))
 
+@app.route('/account')
+def account_index():
+    pass
+
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     connection = get_flask_database_connection(app)
