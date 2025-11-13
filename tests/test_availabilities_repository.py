@@ -21,6 +21,15 @@ def test_get_dates_using_space_id(db_connection):
     assert dates == [Availability(1, datetime.date(2025, 8, 11), 'Available', 1), Availability(8, datetime.date(2026, 4, 14), 'Booked', 1)]    
 
 """
+Gets all of the available dates using the space_id
+"""
+def test_get_dates_using_space_id(db_connection):
+    db_connection.seed("seeds/bubbles_bnb.sql")
+    repo = AvailabilityRepository(db_connection)
+    dates = repo.getAvailableSpaceDates(1)
+    assert dates == [Availability(1, datetime.date(2025, 8, 11), 'Available', 1)]    
+
+"""
 Adding a bunch of dates, given a range
 """
 def test_add_dates_in_a_range(db_connection):
