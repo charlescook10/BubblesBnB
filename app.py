@@ -11,6 +11,8 @@ from lib.spaces import Space
 
 from lib.availability_repository import AvailabilityRepository
 
+from datetime import datetime
+
 # Create a new Flask app
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"] 
@@ -126,23 +128,35 @@ def get_individual_space(space_id):
     connection = get_flask_database_connection(app)
     space_repo = SpaceRepository(connection)
     user_repo = UserRepository(connection)
+    available_repo = AvailabilityRepository(connection)
+
+    availability = available_repo.getAvailableSpaceDates(space_id)
+
+    dates =[dates.date for dates in availability]
+
     space = space_repo.find(space_id)
     if space is None:
         return ("Not Found", 404)
     user = user_repo.find(space.user_id)
-    return render_template("individual_space.html", space=space, user=user)
+
+    return render_template("individual_space.html", space=space, user=user, dates=dates, availabilities = availability)
 
 @app.route('/spaces/<int:id>', methods=['POST'])
-def put_booking(id):
+def make_booking(id):
     conn = get_flask_database_connection(app)
     repo = SpaceRepository(conn)
+    available_repo = AvailabilityRepository(conn)
 
     space = repo.find(id)
 
     if space is None:
         return ("Not Found", 404)
 
-    repo.update(Space(space.id, space.name, space.description, space.price_per_night, True, space.user_id))
+    booking_date = datetime.strptime(request.form["datepicker"], "%Y-%m-%d").date()
+
+    availability = available_repo.findByDate(id, booking_date)
+
+    available_repo.book(availability.id)
 
     return redirect('/approved')
 
@@ -219,17 +233,6 @@ def delete_listing(user_id, space_id):
         repo.delete_space(space_id)
         return redirect(url_for('get_all_spaces_for_one_user', user_id=user_id))
 
-import datetime 
-
-@app.route('/calender/<int:space_id>', methods=['GET'])
-def show_calender(space_id):
-        conn = get_flask_database_connection(app)
-        repo = SpaceRepository(conn)
-        availableRepo = AvailabilityRepository(conn)
-        space = repo.find(space_id)
-        availability = availableRepo.getAvailableSpaceDates(space_id)
-        dates =[dates.date for dates in availability]
-        return render_template('calender.html', dates=dates, availabilities = availability)
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
