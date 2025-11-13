@@ -12,6 +12,12 @@ class AvailabilityRepository:
         row = rows[0]
 
         return Availability(row['id'], row['date'], row['status'], row['space_id'])
+    
+    def findByDate(self, space_id, date):
+        rows = self._connection.execute('SELECT * FROM availabilities WHERE space_id=%s AND date= %s',[space_id, date])
+        row = rows[0]
+
+        return Availability(row['id'], row['date'], row['status'], row['space_id'])
 
     def getSpaceDates(self, space_id):
         rows = self._connection.execute('SELECT * FROM availabilities WHERE space_id= %s ORDER BY date',[space_id])

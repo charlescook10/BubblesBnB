@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ space.name }}</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 </head>
 <body>
     <h1>{{ space.name }}</h1>
@@ -13,10 +17,35 @@
         <p class="space-price-per-night">{{space.price_per_night}}</p>
         <p class="space-booking-flag">{{space.booking_flag}}</p>
         <p class="user-name">{{user.name}}</p>
+
+
         <form action="/spaces/{{space.id}}" method="POST">
+            <h3>Select an Available Date</h3>
+    
+
+            <input id="datepicker" name="datepicker" type="text" placeholder="Choose a date" readonly>
+
+            <br>
+
             <button id="booking-btn" type="submit">Book Here</button>
         </form>        
     </div>
+
+    <script>
+        const availableDates = {{ dates | tojson }};
+
+        console.log(availableDates)
+        
+        flatpickr("#datepicker", {
+        dateFormat: "Y-m-d",
+        enable: availableDates,  // Only allow these dates
+        minDate: "today",
+        disableMobile: true,
+        altInput: true,
+        altFormat: "F j, Y",
+        animate: "true"
+        });
+    </script>
 
 </body>
 </html>
