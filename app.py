@@ -185,6 +185,7 @@ def new_listing():
     else:
         conn = get_flask_database_connection(app)
         repo = SpaceRepository(conn)
+        availability_repo = AvailabilityRepository(conn)
         user_id = current_user.id  
         name = request.form['name']
         description = request.form['description']
@@ -200,7 +201,8 @@ def new_listing():
             user_id=user_id
         )
 
-        repo.add_new_listing(new_space)
+        return_space = repo.add_new_listing(new_space)
+        availability_repo.addRange(return_space.id, datetime.strptime(request.form["available_from"], "%Y-%m-%d").date(), datetime.strptime(request.form["available_to"], "%Y-%m-%d").date())
         return redirect(url_for('get_all_spaces_for_one_user', user_id=user_id))
 
     
