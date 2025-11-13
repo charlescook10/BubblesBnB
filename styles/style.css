@@ -1,0 +1,6 @@
+/* Keep content clear of the fixed nav-bar */
+body { padding-top: 4.4rem; }
+
+.card a { text-decoration: none; }
+.card a; hover { text-decoration; underline; }
+

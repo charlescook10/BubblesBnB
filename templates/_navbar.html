@@ -17,7 +17,7 @@
                 {% if current_user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint in ['new_listing'] %}active{% endif %}" 
-                        href="{{ url_for('new_listings') }}">New Listings</a>
+                        href="{{ url_for('new_listing') }}">New Listings</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint in ['get_all_spaces_for_one_user'] %}active{% endif %}" 
