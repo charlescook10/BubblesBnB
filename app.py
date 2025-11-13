@@ -115,6 +115,7 @@ def get_spaces():
 # Code needs amending with user login details
 
 @app.route('/approved', methods=['GET'])
+@login_required
 def get_approved_booking():
 
     return render_template('approved.html')
@@ -189,6 +190,7 @@ def new_listing():
 
     
 @app.route('/user/spaces/<int:space_id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_space(space_id):
     conn = get_flask_database_connection(app)
     space_repo = SpaceRepository(conn)
@@ -211,6 +213,7 @@ def edit_space(space_id):
 
 
 @app.route('/user/spaces/<int:user_id>/delete/<int:space_id>', methods=['POST'])
+@login_required
 def delete_listing(user_id, space_id):
         conn = get_flask_database_connection(app)
         repo = SpaceRepository(conn)

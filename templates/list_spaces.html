@@ -43,7 +43,7 @@
         </form>
     </div>
     </nav>
-
+    
     {% for space in spaces %}
     <div class="spaces-listing">
         <p class="space-name">{{ space.name }}</p>
@@ -59,7 +59,7 @@
         {% for user in users %}
             {% if user.id == space.user_id %}
                 <p class="space-user-name">Space Owner: {{ user.username }}</p>
-            {% endif %}
+        {% endif %}
         {% endfor %}
 
         <a class="space-user-link" href="{{ url_for('get_all_spaces_for_one_user', user_id=space.user_id) }}">
