@@ -83,6 +83,11 @@ def login():
         flash("Invalid username or password!", "error")
     return render_template("login.html")
 
+@app.route('/logout')
+def logout():
+    logout_user()
+    flash('Logged out successfully!', 'info')
+    return render_template('logout.html')
 
 @app.route('/', methods=['GET'])
 def get_spaces():
