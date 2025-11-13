@@ -44,6 +44,10 @@ def index():
 def account_index():
     return redirect(url_for('my_account' if current_user.is_authenticated else 'login'))
 
+@app.route('/login')
+def login_index():
+    return redirect(url_for('my_account' if current_user.is_authenticated else 'login'))
+
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     connection = get_flask_database_connection(app)
@@ -72,7 +76,7 @@ def register():
     
     return render_template("register.html")
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route("/signin", methods=['GET', 'POST'])
 def login():
     connection = get_flask_database_connection(app)
     repo = UserRepository(connection)
@@ -86,7 +90,9 @@ def login():
             login_user(LoginUser(user))
             flash("Welcome!", "success")
             return redirect(url_for("get_spaces"))
-        flash("Invalid username or password!", "error")
+        else:
+            flash("Invalid username or password", "error")
+            return render_template("login_failed.html")
     return render_template("login.html")
 
 @app.route('/dashboard')
