@@ -84,6 +84,16 @@ def login():
         flash("Invalid username or password!", "error")
     return render_template("login.html")
 
+@app.route('/account/<int:user_id>', methods=['GET'])
+@login_required
+def my_account(user_id):
+    conn = get_flask_database_connection(app)
+    repo = UserRepository(conn)
+    user = repo.find(user_id)
+    if user is None:
+        return ("Not Found", 404)
+    return render_template("account_page.html", user=user)
+
 @app.route('/logout')
 @login_required
 def logout():
