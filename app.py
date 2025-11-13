@@ -35,8 +35,9 @@ def load_user(user_id: str):
     return LoginUser(u) if u else None  
 # == Your Routes Here ==
 
-# GET /spaces
-# Returns the listings
+@app.route('/')
+def index():
+    return redirect(url_for('get_spaces' if current_user.is_authenticated else 'login'))
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -84,19 +85,21 @@ def login():
     return render_template("login.html")
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     flash('Logged out successfully!', 'info')
     return render_template('logout.html')
 
-@app.route('/', methods=['GET'])
+@app.route('/listings', methods=['GET'])
+@login_required
 def get_spaces():
     conn = get_flask_database_connection(app)
     repo = SpaceRepository(conn)
 
     spaces = repo.all()
 
-    return render_template('list_spaces.html', spaces=spaces)
+    return render_template('list_spaces.html', user=current_user, spaces=spaces)
 
 @app.route('/approved', methods=['GET'])
 def get_approved_booking():
