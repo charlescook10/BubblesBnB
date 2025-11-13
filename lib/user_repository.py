@@ -28,9 +28,9 @@ class UserRepository:
     #     return usernames
 
     # def get_username_from_id(self, id):
-    #     rows = self._connection.execute('SELECT username FROM users WHERE id = %s', [id])
+    #     rows = self._connection.execute('SELECT username FROM users JOIN spaces ON users.id = spaces.user_id WHERE users.id = %s', [id])
     #     row = rows[0]
-    #     return User(row["id"], row["name"], row["username"], row["password"])
+    #     return User(row["username"])
     
     def add(self, user):
         rows = self._connection.execute('INSERT INTO users ( name, username, password ) VALUES (%s, %s, %s) RETURNING id', [user.name, user.username, user.password])

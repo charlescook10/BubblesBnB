@@ -92,8 +92,7 @@ def get_spaces():
     user_repo = UserRepository(conn)
 
     spaces = space_repo.all()
-    users = user_repo.find(1)
-# need to find a way to return the user_id of the space into the find function above
+    users = user_repo.all()
 
     return render_template('list_spaces.html', users=users, spaces=spaces)
 

@@ -59,3 +59,4 @@ class SpaceRepository:
             item = Space(row["id"], row["name"], row["description"], row["price_per_night"], row["booked_flag"], row["user_id"])
             spaces.append(item)
         return spaces
+    
