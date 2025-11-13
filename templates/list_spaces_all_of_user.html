@@ -3,24 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{users.username}}'s Spaces</title>
+    <title>{{ users.username }}'s Spaces</title>
 </head>
 <body>
-    <h1>{{users.username}}'s Spaces</h1>
+    <h1>{{ users.username }}'s Spaces</h1>
     {% for space in spaces %}
-
     <div class="spaces-listing">
-        <p class="space-name">{{space.name}}</p>
-        <p class="space-description">{{space.description}}</p>
-        <p class="space-price_per_night">£{{space.price_per_night}} per night</p>
+        <p class="space-name">{{ space.name }}</p>
+        <p class="space-description">{{ space.description }}</p>
+        <p class="space-price_per_night">£{{ space.price_per_night }} per night</p>
         {% if space.booked_flag %}
         <p class="space-booking-flag">This space has been booked</p>
         {% else %}
         <p class="space-booking-flag">This space is currently available</p>
         {% endif %}
-        <a class="space-link" href="{{ url_for('get_individual_space', space_id=space.id)}}">Go to Space</a>
+        <a class="space-link" href="{{ url_for('get_individual_space', space_id=space.id) }}">Go to Space</a>
+
+        <!-- Edit form button -->
+    <form action="{{ url_for('edit_space', space_id=space.id) }}" method="get" style="display:inline;">
+    <button type="submit">Edit</button>
+    </form>
+
+        <!-- Correct delete form -->
+        <form action="{{ url_for('delete_listing', user_id=users.id, space_id=space.id) }}" method="post" style="display:inline;">
+            <button type="submit">Delete</button>
+        </form>
     </div>
     <br>
     {% endfor %}
+    <a href="/" class="button">Go back to listings</a>
 </body>
 </html>

@@ -47,9 +47,9 @@ class SpaceRepository:
 
     
     
-    def delete_space(self, user_id):
+    def delete_space(self, space_id):
         self._connection.execute(
-            'DELETE FROM spaces WHERE id = %s', [user_id])
+            'DELETE FROM spaces WHERE id = %s', [space_id])
         return None
     
     def find_by_user(self, user_id):
