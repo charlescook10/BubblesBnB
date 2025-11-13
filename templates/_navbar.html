@@ -1,49 +1,54 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container"> 
-        <a class="navbar-brand fw-semibold" href="{{ url_for('get_spaces') }}">BubblesBnb</a>
+  <div class="container">
+    <a class="navbar-brand fw-semibold" href="{{ url_for('get_spaces') }}">BubblesBnb</a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
-                aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <div class="collapse navbar-collapse" id="mainNav">
-            <!-- Left -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link {% if request.endpoint in ['get_spaces'] %}active{% endif %}"
-                        href="{{ url_for('get_spaces') }}">Home</a>
-                </li>
-                {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint in ['new_listing'] %}active{% endif %}" 
-                        href="{{ url_for('new_listings') }}">New Listings</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint in ['get_all_spaces_for_one_user'] %}active{% endif %}" 
-                        href="{{ url_for('get_all_spaces_for_one_user', user_id=current_user.id) }}">My Listings</a>
-                    </li>
-                {% endif %}
-            </ul>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+            aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-            <!-- Right -->
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                {% if current_user.is_authenticated %}
-                <li class="nav-item d-flex align-items-center me-2">
-                    <span class="navbar-text">Hi, {{ current_user.name or current_user.username }}!</span>
-                </li>
-                <li class="nav-item">
-                    <form action="{{ url_for('logout') }}" method="post" class="d-inline">
-                        <button class="btn btn-outline-light btn-sm" type="submit">Logout</button>
-                    </form>
-                </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'register' %}active{% endif %}"
-                            href="{{ url_for('register') }}">Register</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </div>
+    <div class="collapse navbar-collapse" id="mainNav">
+      <!-- Left -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint in ['get_spaces'] %}active{% endif %}"
+             href="{{ url_for('get_spaces') }}">Home</a>
+        </li>
+        {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint in ['new_listing'] %}active{% endif %}"
+               href="{{ url_for('new_listing') }}">New Listings</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint in ['get_all_spaces_for_one_user'] %}active{% endif %}"
+               href="{{ url_for('get_all_spaces_for_one_user', user_id=current_user.id) }}">My Listings</a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <!-- Right -->
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        {% if current_user.is_authenticated %}
+          <li class="nav-item d-flex align-items-center me-2">
+            <span class="navbar-text">Hi, {{ current_user.name or current_user.username }}!</span>
+          </li>
+
+          <!-- CHANGED: use GET link to match your GET /logout route -->
+          <li class="nav-item">
+            <a class="btn btn-outline-light btn-sm" href="{{ url_for('logout') }}">Logout</a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint == 'register' %}active{% endif %}"
+               href="{{ url_for('register') }}">Register</a>
+          </li>
+          <li class="nav-item">
+            <!-- your 'login' view handles /signin -->
+            <a class="nav-link {% if request.endpoint in ['login','login_index'] %}active{% endif %}"
+               href="{{ url_for('login') }}">Login</a>
+          </li>
+        {% endif %}
+      </ul>
     </div>
+  </div>
 </nav>

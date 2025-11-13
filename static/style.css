@@ -1,3 +1,13 @@
 body {
     font-size: 18px;
 }
+
+
+/* Keep content clear of fixed-top navbar (if your navbar is fixed-top) */
+body { padding-top: 4.5rem; }
+
+/* Card image cropping */
+.card-img-top {
+  height: 180px;      /* tweak 160–220px to taste */
+  object-fit: cover;  /* smart crop to fill area */
+}
