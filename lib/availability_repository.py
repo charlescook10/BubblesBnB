@@ -7,7 +7,13 @@ class AvailabilityRepository:
     def __init__(self, connection):
         self._connection = connection
         
-    def getDates(self, space_id):
+    def find(self, id):
+        rows = self._connection.execute('SELECT * FROM availabilities WHERE id= %s',[id])
+        row = rows[0]
+
+        return Availability(row['id'], row['date'], row['status'], row['space_id'])
+
+    def getSpaceDates(self, space_id):
         rows = self._connection.execute('SELECT * FROM availabilities WHERE space_id= %s ORDER BY date',[space_id])
         dates = []
         for row in rows:
@@ -19,6 +25,9 @@ class AvailabilityRepository:
         self._connection.execute('INSERT INTO availabilities(date, space_id) SELECT gs::date, %s FROM generate_series(%s::date, %s::date, \'1 day\'::interval) AS gs' ,[space_id, start_date, end_date])
         
         return None
-       
-
+    
+    def book(self, id):
+        self._connection.execute('UPDATE availabilities SET status=\'Booked\' WHERE id = %s' ,[id])
+        
+        return None
     
