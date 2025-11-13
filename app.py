@@ -36,8 +36,13 @@ def load_user(user_id: str):
     return LoginUser(u) if u else None  
 # == Your Routes Here ==
 
-# GET /spaces
-# Returns the listings
+@app.route('/')
+def index():
+    return redirect(url_for('get_spaces' if current_user.is_authenticated else 'login'))
+
+@app.route('/account')
+def account_index():
+    return redirect(url_for('my_account' if current_user.is_authenticated else 'login'))
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -84,8 +89,20 @@ def login():
         flash("Invalid username or password!", "error")
     return render_template("login.html")
 
+@app.route('/dashboard')
+@login_required
+def my_account():
+    return render_template("dashboard.html", user=current_user)
 
-@app.route('/', methods=['GET'])
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Logged out successfully!', 'info')
+    return render_template('logout.html')
+
+@app.route('/listings', methods=['GET'])
+@login_required
 def get_spaces():
     conn = get_flask_database_connection(app)
     space_repo = SpaceRepository(conn)
