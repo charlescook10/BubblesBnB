@@ -28,5 +28,13 @@
     </div>
     <br>
     {% endfor %}
+
+    <a href="{{ url_for('get_all_spaces_for_one_user', id=user_id) }}">
+    <button type="button">View my listings</button>
+    </a>
+    <a href="{{ url_for('new_listing', id=user_id) }}">
+    <button type="button">Add new listing</button>
+    </a>
+
 </body>
 </html>

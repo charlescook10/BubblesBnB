@@ -95,6 +95,7 @@ def get_spaces():
     users = user_repo.all()
 
     return render_template('list_spaces.html', users=users, spaces=spaces)
+# Code needs amending with user login details
 
 @app.route('/approved', methods=['GET'])
 def get_approved_booking():
@@ -163,10 +164,38 @@ def new_listing():
             user_id=user_id
         )
 
-        created_space = repo.add_new_listing(new_space)
+        repo.add_new_listing(new_space)
+        return redirect(url_for('get_all_spaces_for_one_user', id=user_id))
 
-        return render_template('add_new_listings.html', space=created_space)
+    
+@app.route('/user/spaces/<int:space_id>/edit', methods=['GET', 'POST'])
+def edit_space(space_id):
+    conn = get_flask_database_connection(app)
+    space_repo = SpaceRepository(conn)
+    
+    space = space_repo.find(space_id)
+    if space is None:
+        return ("Not Found", 404)
 
+    if request.method == 'POST':
+        # Update space with form data
+        space.name = request.form['name']
+        space.description = request.form['description']
+        space.price_per_night = float(request.form['price_per_night'])
+        
+        space_repo.update(space)
+        return redirect(url_for('get_all_spaces_for_one_user', id=space.user_id))
+    
+    # GET request: show the form with current details
+    return render_template('edit_listing.html', space=space)
+
+
+@app.route('/user/spaces/<int:user_id>/delete/<int:space_id>', methods=['POST'])
+def delete_listing(user_id, space_id):
+        conn = get_flask_database_connection(app)
+        repo = SpaceRepository(conn)
+        repo.delete_space(space_id)
+        return redirect(url_for('get_all_spaces_for_one_user', id=user_id))
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database

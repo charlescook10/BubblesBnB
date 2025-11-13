@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Space - {{ space.name }}</title>
+</head>
+<body>
+    <h1>Edit Space: {{ space.name }}</h1>
+    <form action="" method="post">
+        <label>Name:</label>
+        <input type="text" name="name" value="{{ space.name }}" required><br>
+
+        <label>Description:</label>
+        <textarea name="description" required>{{ space.description }}</textarea><br>
+
+        <label>Price per night (£):</label>
+        <input type="number" step="0.01" name="price_per_night" value="{{ space.price_per_night }}" required><br>
+
+        <button type="submit">Save Changes</button>
+    </form>
+    <a href="{{ url_for('get_all_spaces_for_one_user', id=space.user_id) }}">Cancel</a>
+</body>
+</html>

@@ -40,11 +40,10 @@ for that specific user
 """
 def test_get__all_spaces_for_one_user(db_connection, page, test_web_address):
     db_connection.seed("seeds/bubbles_bnb.sql")
-    page.goto(f"http://{test_web_address}/spaces/1")
-    div_tags = page.locator('div')
-    expect(div_tags).to_have_text(["Test_Space_1 This is a description of Test_Space_1"])
+    page.goto(f"http://{test_web_address}/user/spaces/1")
 
-# Above test does not work
+    expect(page.locator('.space-name').nth(0)).to_have_text('Test_Space_1')
+    expect(page.locator('.space-description').nth(0)).to_have_text('This is a description of Test_Space_1')
 
     
 """
