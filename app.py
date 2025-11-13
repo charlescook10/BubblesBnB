@@ -44,6 +44,10 @@ def index():
 def account_index():
     return redirect(url_for('my_account' if current_user.is_authenticated else 'login'))
 
+@app.route('/login')
+def login_index():
+    return redirect(url_for('my_account' if current_user.is_authenticated else 'login'))
+
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     connection = get_flask_database_connection(app)
@@ -72,7 +76,7 @@ def register():
     
     return render_template("register.html")
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route("/signin", methods=['GET', 'POST'])
 def login():
     connection = get_flask_database_connection(app)
     repo = UserRepository(connection)
@@ -86,7 +90,9 @@ def login():
             login_user(LoginUser(user))
             flash("Welcome!", "success")
             return redirect(url_for("get_spaces"))
-        flash("Invalid username or password!", "error")
+        else:
+            flash("Invalid username or password", "error")
+            return render_template("login_failed.html")
     return render_template("login.html")
 
 @app.route('/dashboard')
@@ -115,6 +121,7 @@ def get_spaces():
 # Code needs amending with user login details
 
 @app.route('/approved', methods=['GET'])
+@login_required
 def get_approved_booking():
 
     return render_template('approved.html')
@@ -189,6 +196,7 @@ def new_listing():
 
     
 @app.route('/user/spaces/<int:space_id>/edit', methods=['GET', 'POST'])
+@login_required
 def edit_space(space_id):
     conn = get_flask_database_connection(app)
     space_repo = SpaceRepository(conn)
@@ -211,6 +219,7 @@ def edit_space(space_id):
 
 
 @app.route('/user/spaces/<int:user_id>/delete/<int:space_id>', methods=['POST'])
+@login_required
 def delete_listing(user_id, space_id):
         conn = get_flask_database_connection(app)
         repo = SpaceRepository(conn)
