@@ -90,7 +90,9 @@ def login():
             login_user(LoginUser(user))
             flash("Welcome!", "success")
             return redirect(url_for("get_spaces"))
-        flash("Invalid username or password!", "error")
+        else:
+            flash("Invalid username or password", "error")
+            return render_template("login_failed.html")
     return render_template("login.html")
 
 @app.route('/dashboard')
