@@ -48,7 +48,7 @@
     <div class="spaces-listing">
         <p class="space-name">{{ space.name }}</p>
         <p class="space-description">{{ space.description }}</p>
-        <p class="space-price_per_night">£{{ space.price_per_night }} per night</p>
+        <p class="space-price_per_night">£{{ '%0.2f'| format(space.price_per_night) }} per night</p>
 
         {% if space.booked_flag %}
             <p class="space-booking-flag">This space has been booked</p>
