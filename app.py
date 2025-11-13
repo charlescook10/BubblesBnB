@@ -38,8 +38,13 @@ def load_user(user_id: str):
     return LoginUser(u) if u else None  
 # == Your Routes Here ==
 
-# GET /spaces
-# Returns the listings
+@app.route('/')
+def index():
+    return redirect(url_for('get_spaces' if current_user.is_authenticated else 'login'))
+
+@app.route('/account')
+def account_index():
+    return redirect(url_for('my_account' if current_user.is_authenticated else 'login'))
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -86,13 +91,25 @@ def login():
         flash("Invalid username or password!", "error")
     return render_template("login.html")
 
+@app.route('/dashboard')
+@login_required
+def my_account():
+    return render_template("dashboard.html", user=current_user)
 
-@app.route('/', methods=['GET'])
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Logged out successfully!', 'info')
+    return render_template('logout.html')
+
+@app.route('/listings', methods=['GET'])
+@login_required
 def get_spaces():
     conn = get_flask_database_connection(app)
     space_repo = SpaceRepository(conn)
     user_repo = UserRepository(conn)
-
+    
     spaces = space_repo.all()
     users = user_repo.all()
 
@@ -133,6 +150,8 @@ def put_booking(id):
 # Returns the listings
 @app.route('/user/spaces/<int:user_id>', methods=['GET'])
 def get_all_spaces_for_one_user(user_id):
+    
+    current_user.id = user_id
     conn = get_flask_database_connection(app)
     space_repo = SpaceRepository(conn)
     user_repo = UserRepository(conn)
@@ -145,17 +164,18 @@ def get_all_spaces_for_one_user(user_id):
 
 
 @app.route('/new_listing', methods=['GET', 'POST'])
+@login_required
 def new_listing():
     if request.method == 'GET':
         return render_template('add_new_listings.html')
     else:
         conn = get_flask_database_connection(app)
         repo = SpaceRepository(conn)
-
+        user_id = current_user.id  
         name = request.form['name']
         description = request.form['description']
         price_per_night = float(request.form['price_per_night'])
-        user_id = 1
+
 
         new_space = Space(
             id=None,
@@ -167,7 +187,7 @@ def new_listing():
         )
 
         repo.add_new_listing(new_space)
-        return redirect(url_for('get_all_spaces_for_one_user', id=user_id))
+        return redirect(url_for('get_all_spaces_for_one_user', user_id=user_id))
 
     
 @app.route('/user/spaces/<int:space_id>/edit', methods=['GET', 'POST'])
@@ -186,7 +206,7 @@ def edit_space(space_id):
         space.price_per_night = float(request.form['price_per_night'])
         
         space_repo.update(space)
-        return redirect(url_for('get_all_spaces_for_one_user', id=space.user_id))
+        return redirect(url_for('get_all_spaces_for_one_user', user_id=space.user_id))
     
     # GET request: show the form with current details
     return render_template('edit_listing.html', space=space)
@@ -197,7 +217,7 @@ def delete_listing(user_id, space_id):
         conn = get_flask_database_connection(app)
         repo = SpaceRepository(conn)
         repo.delete_space(space_id)
-        return redirect(url_for('get_all_spaces_for_one_user', id=user_id))
+        return redirect(url_for('get_all_spaces_for_one_user', user_id=user_id))
 
 import datetime 
 
