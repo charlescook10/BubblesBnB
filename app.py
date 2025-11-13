@@ -93,8 +93,9 @@ def get_spaces():
 
     spaces = space_repo.all()
     users = user_repo.all()
+    user_id = current_user.id
 
-    return render_template('list_spaces.html', users=users, spaces=spaces)
+    return render_template('list_spaces.html', users=users, spaces=spaces, user_id=user_id)
 # Code needs amending with user login details
 
 @app.route('/approved', methods=['GET'])
@@ -134,7 +135,9 @@ def get_all_spaces_for_one_user(user_id):
     conn = get_flask_database_connection(app)
     space_repo = SpaceRepository(conn)
     user_repo = UserRepository(conn)
-
+    # if current_user.id != user_id:
+    #     flash("You cannot view another user's listings.", "error")
+    #     return redirect(url_for('get_spaces'))
     spaces = space_repo.find_by_user(user_id)
     users = user_repo.find(user_id)
     if spaces is None:
@@ -153,7 +156,7 @@ def new_listing():
         name = request.form['name']
         description = request.form['description']
         price_per_night = float(request.form['price_per_night'])
-        user_id = 1
+        user_id = current_user.id
 
         new_space = Space(
             id=None,
