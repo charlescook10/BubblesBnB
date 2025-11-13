@@ -45,19 +45,49 @@
     </nav>
     {% for space in spaces %}
 
+    {% for space in spaces %}
     <div class="spaces-listing">
-        <p class="space-name">{{space.name}}</p>
-        <p class="space-description">{{space.description}}</p>
-        {% if space.booked_flag %}
-        <p class="space-booking-flag">This space has been booked</p>
-        {% endif %}
-        <a class="space-link" href="{{ url_for('get_individual_space', space_id=space.id)}}">Go to Space</a>
-    </div>
+        <p class="space-name">{{ space.name }}</p>
+        <p class="space-description">{{ space.description }}</p>
+        <p class="space-price_per_night">£{{ space.price_per_night }} per night</p>
 
+        {% if space.booked_flag %}
+            <p class="space-booking-flag">This space has been booked</p>
+        {% else %}
+            <p class="space-booking-flag">This space is currently available</p>
+        {% endif %}
+
+        {% for user in users %}
+            {% if user.id == space.user_id %}
+                <p class="space-user-name">Space Owner: {{ user.username }}</p>
+            {% endif %}
+        {% endfor %}
+
+        <a class="space-user-link" href="{{ url_for('get_all_spaces_for_one_user', user_id=space.user_id) }}">
+            Go to all listings for this user
+        </a>
+        <p>
+            <a class="space-link" href="{{ url_for('get_individual_space', space_id=space.id) }}">
+                Go to Space
+            </a>
+        </p>
+    </div>
+    <br>
     {% endfor %}
 
     <p><a href="/logout" class="button">Log out</a></p>
 
     <p><a href="/account" class="button">My Account</a></p>
+{% if current_user.is_authenticated %}
+    <a href="{{ url_for('get_all_spaces_for_one_user', user_id=current_user.id) }}">
+        <button type="button">View My Listings</button>
+    </a>
+    <a href="{{ url_for('new_listing') }}">
+        <button type="button">Add New Listing</button>
+    </a>
+{% else %}
+    <p><a href="{{ url_for('login') }}">Log in</a> to view your listings.</p>
+{% endif %}
+
 </body>
 </html>

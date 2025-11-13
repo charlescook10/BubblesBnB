@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from lib.database_connection import get_flask_database_connection
 from lib.spaces_repository import SpaceRepository
 from lib.user_repository import UserRepository
+
 from lib.user import User
 from lib.spaces import Space
 
@@ -104,11 +105,14 @@ def logout():
 @login_required
 def get_spaces():
     conn = get_flask_database_connection(app)
-    repo = SpaceRepository(conn)
+    space_repo = SpaceRepository(conn)
+    user_repo = UserRepository(conn)
+    
+    spaces = space_repo.all()
+    users = user_repo.all()
 
-    spaces = repo.all()
-
-    return render_template('list_spaces.html', user=current_user, spaces=spaces)
+    return render_template('list_spaces.html', users=users, spaces=spaces)
+# Code needs amending with user login details
 
 @app.route('/approved', methods=['GET'])
 def get_approved_booking():
@@ -142,29 +146,34 @@ def put_booking(id):
 
 # GET /user/spaces/1
 # Returns the listings
-@app.route('/user/spaces/<int:id>', methods=['GET'])
-def get_all_spaces_for_one_user(id):
+@app.route('/user/spaces/<int:user_id>', methods=['GET'])
+def get_all_spaces_for_one_user(user_id):
+    
+    current_user.id = user_id
     conn = get_flask_database_connection(app)
     space_repo = SpaceRepository(conn)
     user_repo = UserRepository(conn)
 
-    spaces = space_repo.find_by_user(id)
-    users = user_repo.find(id)
+    spaces = space_repo.find_by_user(user_id)
+    users = user_repo.find(user_id)
+    if spaces is None:
+        return ("Not Found", 404)
     return render_template('list_spaces_all_of_user.html', users=users, spaces=spaces)
 
 
 @app.route('/new_listing', methods=['GET', 'POST'])
+@login_required
 def new_listing():
     if request.method == 'GET':
         return render_template('add_new_listings.html')
     else:
         conn = get_flask_database_connection(app)
         repo = SpaceRepository(conn)
-
+        user_id = current_user.id  
         name = request.form['name']
         description = request.form['description']
         price_per_night = float(request.form['price_per_night'])
-        user_id = 1
+
 
         new_space = Space(
             id=None,
@@ -175,10 +184,38 @@ def new_listing():
             user_id=user_id
         )
 
-        created_space = repo.add_new_listing(new_space)
+        repo.add_new_listing(new_space)
+        return redirect(url_for('get_all_spaces_for_one_user', user_id=user_id))
 
-        return render_template('add_new_listings.html', space=created_space)
+    
+@app.route('/user/spaces/<int:space_id>/edit', methods=['GET', 'POST'])
+def edit_space(space_id):
+    conn = get_flask_database_connection(app)
+    space_repo = SpaceRepository(conn)
+    
+    space = space_repo.find(space_id)
+    if space is None:
+        return ("Not Found", 404)
 
+    if request.method == 'POST':
+        # Update space with form data
+        space.name = request.form['name']
+        space.description = request.form['description']
+        space.price_per_night = float(request.form['price_per_night'])
+        
+        space_repo.update(space)
+        return redirect(url_for('get_all_spaces_for_one_user', user_id=space.user_id))
+    
+    # GET request: show the form with current details
+    return render_template('edit_listing.html', space=space)
+
+
+@app.route('/user/spaces/<int:user_id>/delete/<int:space_id>', methods=['POST'])
+def delete_listing(user_id, space_id):
+        conn = get_flask_database_connection(app)
+        repo = SpaceRepository(conn)
+        repo.delete_space(space_id)
+        return redirect(url_for('get_all_spaces_for_one_user', user_id=user_id))
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
