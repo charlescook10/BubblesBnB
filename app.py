@@ -41,7 +41,7 @@ def index():
 
 @app.route('/account')
 def account_index():
-    pass
+    return redirect(url_for('my_account' if current_user.is_authenticated else 'login'))
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -88,15 +88,10 @@ def login():
         flash("Invalid username or password!", "error")
     return render_template("login.html")
 
-@app.route('/account/<int:user_id>', methods=['GET'])
+@app.route('/dashboard')
 @login_required
-def my_account(user_id):
-    conn = get_flask_database_connection(app)
-    repo = UserRepository(conn)
-    user = repo.find(user_id)
-    if user is None:
-        return ("Not Found", 404)
-    return render_template("account_page.html", user=user)
+def my_account():
+    return render_template("dashboard.html", user=current_user)
 
 @app.route('/logout')
 @login_required
