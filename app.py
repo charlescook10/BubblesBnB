@@ -102,6 +102,12 @@ def get_approved_booking():
 
     return render_template('approved.html')
 
+@app.route('/denied', methods=['GET'])
+def get_denied_booking():
+
+    return render_template('denied.html')
+
+
 @app.route("/spaces/<int:space_id>")
 def get_individual_space(space_id):
     connection = get_flask_database_connection(app)
@@ -123,9 +129,12 @@ def put_booking(id):
     if space is None:
         return ("Not Found", 404)
 
-    repo.update(Space(space.id, space.name, space.description, space.price_per_night, True, space.user_id))
+    if space.booked_flag == True:
+        return redirect('/denied')
+    else:
+        repo.update(Space(space.id, space.name, space.description, space.price_per_night, True, space.user_id))
 
-    return redirect('/approved')
+        return redirect('/approved')
 
 # GET /user/spaces/1
 # Returns the listings
