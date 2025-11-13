@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calender</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body>
+    <h1>Select an Available Date</h1>
+
+    <input id="datepicker" type="text" placeholder="Choose a date" readonly>
+
+    <script>
+        const availableDates = {{ dates | tojson }};
+
+        console.log(availableDates)
+        
+        flatpickr("#datepicker", {
+        dateFormat: "Y-m-d",
+        enable: availableDates,  // Only allow these dates
+        minDate: "today",
+        disableMobile: true,
+        altInput: true,
+        altFormat: "F j, Y",
+        animate: "true"
+        });
+    </script>
+</body>
+</html>

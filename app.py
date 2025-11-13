@@ -8,6 +8,8 @@ from lib.user_repository import UserRepository
 from lib.user import User
 from lib.spaces import Space
 
+from lib.availability_repository import AvailabilityRepository
+
 # Create a new Flask app
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"] 
@@ -191,6 +193,18 @@ def delete_listing(user_id, space_id):
         repo = SpaceRepository(conn)
         repo.delete_space(space_id)
         return redirect(url_for('get_all_spaces_for_one_user', id=user_id))
+
+import datetime 
+
+@app.route('/calender/<int:space_id>', methods=['GET'])
+def show_calender(space_id):
+        conn = get_flask_database_connection(app)
+        repo = SpaceRepository(conn)
+        availableRepo = AvailabilityRepository(conn)
+        space = repo.find(space_id)
+        availability = availableRepo.getAvailableSpaceDates(space_id)
+        dates =[dates.date for dates in availability]
+        return render_template('calender.html', dates=dates, availabilities = availability)
 
 # These lines start the server if you run this file directly
 # They also start the server configured to use the test database
