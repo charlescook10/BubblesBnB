@@ -55,5 +55,31 @@ def test_approval_page(db_connection, page, test_web_address):
     page.goto(f"http://{test_web_address}/approved")
     heading = page.locator("h1")
     expect(heading).to_have_text('This booking has been approved')
-    expect(page.get_by_text("Go back to listing")).to_be_visible();
-    expect(page.get_by_role("link", name="Go back to listing"))
+    expect(page.get_by_text("Back to all listings")).to_be_visible();
+    expect(page.get_by_role("link", name="Back to all listings"))
+
+
+"""
+GET /register
+returns the correctly formatted webpage
+"""
+
+def test_register_page(db_connection, page, test_web_address):
+    db_connection.seed("seeds/bubbles_bnb.sql")
+    page.goto(f"http://{test_web_address}/register")
+    heading = page.locator("h1")
+    expect(heading).to_have_text('Create your account')
+    expect(page.get_by_text('Sign up')).to_be_visible()
+    
+"""
+GET /register
+returns the correctly formatted webpage
+"""
+
+def test_login_page(db_connection, page, test_web_address):
+    db_connection.seed("seeds/bubbles_bnb.sql")
+    page.goto(f"http://{test_web_address}/login")
+    heading = page.locator("h1")
+    expect(heading).to_have_text('Log in to your account')
+    expect(page.get_by_text('Login')).to_be_visible()
+    
