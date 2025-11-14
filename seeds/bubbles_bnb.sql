@@ -2,8 +2,10 @@ DROP TABLE IF EXISTS users CASCADE;
 DROP SEQUENCE IF EXISTS users_id_seq;
 DROP TABLE IF EXISTS spaces CASCADE;
 DROP SEQUENCE IF EXISTS spaces_id_seq;
-DROP TABLE IF EXISTS availabilities;
+DROP TABLE IF EXISTS availabilities CASCADE;
 DROP SEQUENCE IF EXISTS availabilities_id_seq;
+DROP TABLE IF EXISTS bookings;
+DROP SEQUENCE IF EXISTS bookings_id_seq;
 
 CREATE SEQUENCE IF NOT EXISTS users_id_seq;
 CREATE TABLE users (
@@ -36,6 +38,17 @@ CREATE TABLE availabilities (
     on delete cascade
 );
 
+CREATE SEQUENCE IF NOT EXISTS bookings_id_seq;
+CREATE TABLE bookings (
+    user_id   INTEGER NOT NULL,
+    availability_id  INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (availability_id) REFERENCES availabilities(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, availability_id)
+);
+
+
+
 INSERT INTO users (name, username, password) VALUES ('Test_User_1', 'testuser1', 'abc123');
 INSERT INTO users (name, username, password) VALUES ('Test_User_2', 'testuser2', '123abc');
 
@@ -54,3 +67,8 @@ INSERT INTO availabilities (date, status, space_id) VALUES ('2027-02-01', 'Avail
 INSERT INTO availabilities (date, status, space_id) VALUES ('2026-05-30', 'Booked', 3);
 INSERT INTO availabilities (date, status, space_id) VALUES ('2026-07-01', 'Available', 2);
 INSERT INTO availabilities (date, status, space_id) VALUES ('2026-04-14', 'Booked', 1);
+
+
+INSERT INTO bookings (user_id, availability_id) VALUES (2, 3);
+INSERT INTO bookings (user_id, availability_id) VALUES (1, 6);
+INSERT INTO bookings (user_id, availability_id) VALUES (2, 8);
