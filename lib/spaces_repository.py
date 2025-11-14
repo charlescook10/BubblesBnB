@@ -22,7 +22,7 @@ class SpaceRepository:
     def update(self, space):
         rows = self._connection.execute('UPDATE spaces SET name=%s, description=%s, price_per_night=%s, booked_flag=%s, user_id=%s WHERE id = %s RETURNING *', [space.name, space.description, space.price_per_night, space.booked_flag, space.user_id, space.id])
         row = rows[0]
-        return Space(row["id"], row["name"], row["description"], row["price_per_night"], row["booked_flag"], row["user_id"])
+        return Space(row["id"], row["name"], row["description"], row["price_per_night"], row["booked_flag"], row["image_path"], row["user_id"])
     
     
     def add_new_listing(self, space):
