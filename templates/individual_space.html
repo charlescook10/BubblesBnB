@@ -3,18 +3,29 @@
 {% block title %}{{ space.name }} · BubblesBnB{% endblock %}
 
 {% block content %}
-  <!-- Flatpickr CSS (page-local) -->
+  {# Flatpickr CSS (page-local). In HTML5 it's valid to include this here. #}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
   <div class="row g-4 align-items-start">
     <!-- Image -->
     <div class="col-12 col-lg-6">
-      {# Use a mock image (1–4) based on id; drop mock-1..4.jpg in static/img/ #}
+      {# 
+        Prefer user-uploaded image_path, otherwise fall back to a mock.
+        IMPORTANT: space.image_path should be a path *relative* to /static,
+        e.g. "uploads/space1.jpg" or "img/space1.jpg".
+      #}
+      {% if space.image_path %}
+        {% set image_path = space.image_path %}
+      {% else %}
+        {% set image_path = 'img/mock-' ~ (((space.id or 1) - 1) % 4 + 1) ~ '.jpg' %}
+      {% endif %}
+
       <img
         class="img-fluid rounded shadow-sm w-100"
         style="max-height: 360px; object-fit: cover;"
-        src="{{ url_for('static', filename=space.image_path) }}"  
-        alt="{{ space.name }} photo">
+        src="{{ url_for('static', filename=image_path) }}"
+        alt="{{ space.name }} photo"
+        onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/space-placeholder.jpg') }}';">
     </div>
 
     <!-- Details + booking -->
@@ -43,12 +54,13 @@
           <h2 class="h5 mb-3">Select an available date</h2>
           <form action="{{ url_for('make_booking', id=space.id) }}" method="post" class="row g-3">
             <div class="col-12 col-md-8">
-              <input id="datepicker"
-                     name="datepicker"
-                     type="text"
-                     class="form-control"
-                     placeholder="Choose a date"
-                     required>
+              <input
+                id="datepicker"
+                name="datepicker"
+                type="text"
+                class="form-control"
+                placeholder="Choose a date"
+                required>
             </div>
             <div class="col-12 col-md-4 d-grid">
               <button id="booking-btn" type="submit" class="btn btn-primary">Book this space</button>

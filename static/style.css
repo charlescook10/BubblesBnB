@@ -2,7 +2,6 @@ body {
     font-size: 18px;
 }
 
-
 /* Keep content clear of fixed-top navbar (if your navbar is fixed-top) */
 body { padding-top: 4.5rem; }
 
