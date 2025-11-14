@@ -1,7 +1,9 @@
 import os
+import uuid
 from flask import Flask, request, render_template, redirect, url_for, flash, current_app
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from lib.database_connection import get_flask_database_connection
 from lib.spaces_repository import SpaceRepository
 from lib.user_repository import UserRepository
@@ -15,7 +17,19 @@ from datetime import datetime
 
 # Create a new Flask app
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"] 
+app.config["SECRET_KEY"] = os.environ["FLASK_SECRET_KEY"]
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024 # 8MB Limit
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename: str) -> bool:
+    return ('.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS)
 
 class LoginUser(UserMixin):
     def __init__(self, user: User):
@@ -200,6 +214,22 @@ def new_listing():
         name = request.form['name']
         description = request.form['description']
         price_per_night = float(request.form['price_per_night'])
+        image_file = request.files.get('image')
+
+        image_path = None
+        
+        if image_file and image_file.filename:
+            if not allowed_file(image_file.filename):
+                flash('Image must be a png, jpg, jpeg, or gif.', 'error')
+                return render_template('add_new_listings.html')
+            
+            ext = image_file.filename.rsplit('.', 1)[1].lower()
+            unique_file_name = f"{uuid.uuid4().hex}.{ext}"
+            filename = secure_filename(unique_file_name)
+
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image_file.save(file_path)
+            image_path = f"uploads/{filename}"
 
 
         new_space = Space(
@@ -208,6 +238,7 @@ def new_listing():
             description=description,
             price_per_night=price_per_night,
             booked_flag=False,
+            image_path=image_path,
             user_id=user_id
         )
 
