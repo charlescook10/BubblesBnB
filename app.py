@@ -10,7 +10,7 @@ from lib.user import User
 from lib.spaces import Space
 
 from lib.availability_repository import AvailabilityRepository
-
+from lib.bookings_repository import BookingRepository
 from datetime import datetime
 
 # Create a new Flask app
@@ -152,10 +152,12 @@ def get_individual_space(space_id):
     return render_template("individual_space.html", space=space, user=user, dates=dates, availabilities = availability)
 
 @app.route('/spaces/<int:id>', methods=['POST'])
+@login_required
 def make_booking(id):
     conn = get_flask_database_connection(app)
     repo = SpaceRepository(conn)
     available_repo = AvailabilityRepository(conn)
+    booking_repo = BookingRepository(conn)
 
     space = repo.find(id)
 
@@ -165,8 +167,9 @@ def make_booking(id):
     booking_date = datetime.strptime(request.form["datepicker"], "%Y-%m-%d").date()
 
     availability = available_repo.findByDate(id, booking_date)
-
+    booking_repo.create(current_user.id, availability.id)
     available_repo.book(availability.id)
+
 
     return redirect('/approved')
 
@@ -185,6 +188,28 @@ def get_all_spaces_for_one_user(user_id):
     if spaces is None:
         return ("Not Found", 404)
     return render_template('list_spaces_all_of_user.html', users=users, spaces=spaces)
+
+# GET /user/bookings/1
+# Returns the bookings
+@app.route('/user/bookings/<int:user_id>', methods=['GET'])
+@login_required
+def get_all_bookings_for_one_user(user_id):
+    conn = get_flask_database_connection(app)
+    space_repo = SpaceRepository(conn)
+    user_repo = UserRepository(conn)
+    available_repo = AvailabilityRepository(conn)
+    booking_repo = BookingRepository(conn)
+
+    user_bookings = booking_repo.find(user_id)
+    if user_bookings is None:
+        return ("Not Found", 404)
+    
+    bookings_spaces = []
+    for booking in user_bookings.bookings:
+        space = space_repo.find(booking.space_id)
+        bookings_spaces.append((booking, space))
+        
+    return render_template('list_bookings.html', user=user_bookings, bookings_spaces=bookings_spaces)
 
 
 @app.route('/new_listing', methods=['GET', 'POST'])
