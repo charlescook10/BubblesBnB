@@ -2,8 +2,10 @@ DROP TABLE IF EXISTS users CASCADE;
 DROP SEQUENCE IF EXISTS users_id_seq;
 DROP TABLE IF EXISTS spaces CASCADE;
 DROP SEQUENCE IF EXISTS spaces_id_seq;
-DROP TABLE IF EXISTS availabilities;
+DROP TABLE IF EXISTS availabilities CASCADE;
 DROP SEQUENCE IF EXISTS availabilities_id_seq;
+DROP TABLE IF EXISTS bookings;
+DROP SEQUENCE IF EXISTS bookings_id_seq;
 
 CREATE SEQUENCE IF NOT EXISTS users_id_seq;
 CREATE TABLE users (
@@ -34,6 +36,15 @@ CREATE TABLE availabilities (
   constraint fk_space foreign key(space_id)
     references spaces(id)
     on delete cascade
+);
+
+CREATE SEQUENCE IF NOT EXISTS bookings_id_seq;
+CREATE TABLE bookings (
+    user_id   INTEGER NOT NULL,
+    availability_id  INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (availability_id) REFERENCES availabilities(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, availability_id)
 );
 
 INSERT INTO users (name, username, password) VALUES ('Saffron Smith', 'saffron1', 'scrypt:32768:8:1$8FejpA6rMrY4a6MH$8a6ad3dc300d47d2b7aa7a1841b2440e9e097959f3dc5d6e5de133943f65162ae2e2ebb19a792898e19bd3a53b1ad0d8bb290def99842378c1c6b5c21b444596');
