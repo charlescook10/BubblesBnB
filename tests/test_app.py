@@ -46,17 +46,17 @@ def test_get__all_spaces_for_one_user(db_connection, page, test_web_address):
     expect(page.locator('.space-description').nth(0)).to_have_text('This is a description of Test_Space_1')
 
     
-"""
-GET /approved
-returns the correctly formatted webpage
-"""
-def test_approval_page(db_connection, page, test_web_address):
-    db_connection.seed("seeds/bubbles_bnb.sql")
-    page.goto(f"http://{test_web_address}/approved")
-    heading = page.locator("h1")
-    expect(heading).to_have_text('This booking has been approved')
-    expect(page.get_by_text("Back to all listings")).to_be_visible();
-    expect(page.get_by_role("link", name="Back to all listings"))
+# """
+# GET /approved
+# returns the correctly formatted webpage
+# """
+# def test_approval_page(db_connection, page, test_web_address):
+#     db_connection.seed("seeds/bubbles_bnb.sql")
+#     page.goto(f"http://{test_web_address}/approved")
+#     heading = page.locator("h1")
+#     expect(heading).to_have_text('This booking has been approved')
+#     expect(page.get_by_text("Back to all listings")).to_be_visible();
+#     expect(page.get_by_role("link", name="Back to all listings"))
 
 
 """
@@ -71,15 +71,40 @@ def test_register_page(db_connection, page, test_web_address):
     expect(heading).to_have_text('Create your account')
     expect(page.get_by_text('Sign up')).to_be_visible()
     
-"""
-GET /register
-returns the correctly formatted webpage
-"""
+# """
+# GET /register
+# returns the correctly formatted webpage
+# """
 
-def test_login_page(db_connection, page, test_web_address):
+# def test_login_page(db_connection, page, test_web_address):
+#     db_connection.seed("seeds/bubbles_bnb.sql")
+#     page.goto(f"http://{test_web_address}/login")
+#     heading = page.locator("h1")
+#     expect(heading).to_have_text('Log in to your account')
+#     expect(page.get_by_text('Login')).to_be_visible()
+
+def test_signup_login_approval_page(db_connection, page, test_web_address):
     db_connection.seed("seeds/bubbles_bnb.sql")
-    page.goto(f"http://{test_web_address}/login")
+
+    page.goto(f"http://{test_web_address}/register")
+
+    page.fill("input[name='name']", "testuser5")
+    page.fill("input[name='username']", "testuser5")
+    page.fill("input[name='password']", "abc12345")  # 8+ chars to meet your rule
+    page.click("button[type='submit']")
+
+    page.wait_for_url(f"http://{test_web_address}/signin", timeout=10000)
+    page.fill("input[name='username']", "testuser5")
+    page.fill("input[name='password']", "abc12345")
+    page.click("button[type='submit']")
+
+    page.wait_for_url(f"http://{test_web_address}/listings", timeout=10000)
+    page.wait_for_selector("h1:has-text('All Spaces')", timeout=10000)
+
+    page.goto(f"http://{test_web_address}/approved")
+
     heading = page.locator("h1")
-    expect(heading).to_have_text('Log in to your account')
-    expect(page.get_by_text('Login')).to_be_visible()
+    expect(heading).to_have_text("This booking has been approved")
+    back_link = page.get_by_role("link", name="Go back to listing")
+    expect(back_link).to_be_visible()
     
