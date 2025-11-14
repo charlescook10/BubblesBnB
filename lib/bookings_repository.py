@@ -6,9 +6,19 @@ class BookingRepository:
         self._connection = connection
     def find(self, user_id):
         rows = self._connection.execute('SELECT users.id, users.name, users.username, users.password, a.id AS a_id, a.date, a.status, a.space_id FROM users JOIN bookings ON users.id=bookings.user_id JOIN availabilities a ON a.id= bookings.availability_id WHERE users.id= %s' , [user_id])
+        
+        rows = list(rows)
+
+        if not rows:
+            return None
+
         row = rows[0]
         availabilities = [Availability(row_a['a_id'], row_a['date'], row_a['status'], row_a['space_id']) for row_a in rows]
         return User(row['id'], row['name'], row['username'], row['password'], availabilities)
     def create(self, user_id, availability_id):
         self._connection.execute('INSERT INTO bookings (user_id, availability_id) VALUES(%s, %s)', [user_id, availability_id])
+        return None
+    def delete(self, availability_id):
+        self._connection.execute('DELETE FROM bookings WHERE availability_id = %s', [availability_id])
+        self._connection.execute('UPDATE availabilities SET status=\'Available\' WHERE id=%s', [availability_id])
         return None

@@ -23,6 +23,10 @@
             <a class="nav-link {% if request.endpoint in ['get_all_spaces_for_one_user'] %}active{% endif %}"
                href="{{ url_for('get_all_spaces_for_one_user', user_id=current_user.id) }}">My Listings</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.endpoint in ['get_all_bookings_for_one_user'] %}active{% endif %}"
+               href="{{ url_for('get_all_bookings_for_one_user', user_id=current_user.id) }}">My Bookings</a>
+          </li>
         {% endif %}
       </ul>
 

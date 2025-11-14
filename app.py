@@ -120,6 +120,8 @@ def get_spaces():
     conn = get_flask_database_connection(app)
     space_repo = SpaceRepository(conn)
     user_repo = UserRepository(conn)
+    available_repo = AvailabilityRepository(conn)
+
     
     spaces = space_repo.all()
     users = user_repo.all()
@@ -196,20 +198,49 @@ def get_all_spaces_for_one_user(user_id):
 def get_all_bookings_for_one_user(user_id):
     conn = get_flask_database_connection(app)
     space_repo = SpaceRepository(conn)
-    user_repo = UserRepository(conn)
-    available_repo = AvailabilityRepository(conn)
     booking_repo = BookingRepository(conn)
+    user_repo = UserRepository(conn)
 
-    user_bookings = booking_repo.find(user_id)
-    if user_bookings is None:
-        return ("Not Found", 404)
+    user = user_repo.find(user_id)
+
     
+    if user is None:
+        return ("Not Found", 404)
+    user_bookings = booking_repo.find(user_id)
+
     bookings_spaces = []
-    for booking in user_bookings.bookings:
-        space = space_repo.find(booking.space_id)
-        bookings_spaces.append((booking, space))
+    if user_bookings is not None:
+        for booking in user_bookings.bookings:
+            space = space_repo.find(booking.space_id)
+            bookings_spaces.append((booking, space))
+
+    return render_template('list_bookings.html', user=user, bookings_spaces=bookings_spaces)
+
+# POST /user/bookings/1
+# cancels a booking
+@app.route('/user/bookings/<int:user_id>/delete/<int:booking_id>', methods=['POST'])
+@login_required
+def delete_booking(user_id, booking_id):
+    conn = get_flask_database_connection(app)
+    space_repo = SpaceRepository(conn)
+    booking_repo = BookingRepository(conn)
+    user_repo = UserRepository(conn)
+
+    user = user_repo.find(user_id)
+
+    booking_repo.delete(booking_id)
+
+    if user is None:
+        return ("Not Found", 404)
+    user_bookings = booking_repo.find(user_id)
+
+    bookings_spaces = []
+    if user_bookings is not None:
+        for booking in user_bookings.bookings:
+            space = space_repo.find(booking.space_id)
+            bookings_spaces.append((booking, space))
         
-    return render_template('list_bookings.html', user=user_bookings, bookings_spaces=bookings_spaces)
+    return redirect(url_for('get_all_bookings_for_one_user', user_id=user.id))
 
 
 @app.route('/new_listing', methods=['GET', 'POST'])
