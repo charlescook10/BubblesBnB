@@ -10,11 +10,20 @@
       <div class="col">
         <div class="card h-100 shadow-sm">
 
-          {# 4 mock photos cycling: static/img/mock-1..4.jpg #}
-          {% set i = (loop.index0 % 4) + 1 %}
-          <img class="card-img-top"
-               src="{{ url_for('static', filename='img/mock-' ~ i ~ '.jpg') }}"
-               alt="{{ space.name }} photo">
+          {# Image: prefer user-uploaded path, else cycle mock-1..4.jpg, with a final placeholder fallback #}
+          {% if space.image_path %}
+            {% set image_path = space.image_path %}
+          {% else %}
+            {# cycle mock images using loop index #}
+            {% set mock_index = (loop.index0 % 4) + 1 %}
+            {% set image_path = 'img/mock-' ~ mock_index ~ '.jpg' %}
+          {% endif %}
+
+          <img
+            class="card-img-top"
+            src="{{ url_for('static', filename=image_path) }}"
+            alt="{{ space.name }} photo"
+            onerror="this.onerror=null;this.src='{{ url_for('static', filename='img/space-placeholder.jpg') }}';">
 
           <div class="card-body d-flex flex-column">
             <h2 class="h5 card-title mb-1">
