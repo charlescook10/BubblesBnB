@@ -10,11 +10,10 @@
     <!-- Image -->
     <div class="col-12 col-lg-6">
       {# Use a mock image (1–4) based on id; drop mock-1..4.jpg in static/img/ #}
-      {% set img_index = ((space.id - 1) % 4) + 1 %}
       <img
         class="img-fluid rounded shadow-sm w-100"
         style="max-height: 360px; object-fit: cover;"
-        src="{{ url_for('static', filename='img/mock-' ~ img_index ~ '.jpg') }}"
+        src="{{ url_for('static', filename=space.image_path) }}"  
         alt="{{ space.name }} photo">
     </div>
 
