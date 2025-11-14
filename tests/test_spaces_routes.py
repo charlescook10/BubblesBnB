@@ -9,10 +9,22 @@ GET /spaces
 def test_get_spaces(db_connection, page, test_web_address):
   db_connection.seed('seeds/bubbles_bnb.sql')
 
-  page.goto(f"http://{test_web_address}")
+  page.goto(f"http://{test_web_address}/register")
+  page.fill("input[name='name']", "testuser4")
+  page.fill("input[name='username']", "testuser4")
+  page.fill("input[name='password']", "abc12345")  
+  page.click("button[type='submit']")
 
-  space_names = page.locator('.space-name')
-  space_descriptions = page.locator('.space-description')
+  page.wait_for_url(f"http://{test_web_address}/signin", timeout=10000)
+  page.fill("input[name='username']", "testuser4")
+  page.fill("input[name='password']", "abc12345")
+  page.click("button[type='submit']")
+
+  page.wait_for_url(f"http://{test_web_address}/listings", timeout=10000)
+  page.wait_for_selector("h1:has-text('All Spaces')", timeout=10000)
+
+  space_names = page.locator(".card-title a")
+  space_descriptions = page.locator(".card-text")
 
   expect(space_names).to_have_text([
     'Test_Space_1',
