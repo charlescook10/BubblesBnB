@@ -14,7 +14,7 @@
     <div class="spaces-listing">
         <p class="space-name">{{space.name}}</p>
         <p class="space-description">{{space.description}}</p>
-        <p class="space-price-per-night">{{space.price_per_night}}</p>
+        <p class="space-price-per-night">£{{ '%.2f'|format(space.price_per_night) }}</p>
         <p class="space-booking-flag">{{space.booking_flag}}</p>
         <p class="user-name">{{user.name}}</p>
 
