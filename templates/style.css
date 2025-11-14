@@ -1,0 +1,6 @@
+/* Keep content clear of the fixed navbar */
+body { padding-top: 4.5rem; }
+
+/* Optional, subtle improvements */
+.card a { text-decoration: none; }
+.card a:hover { text-decoration: underline; }
