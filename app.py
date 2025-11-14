@@ -62,9 +62,9 @@ def index():
 def account_index():
     return redirect(url_for('my_account' if current_user.is_authenticated else 'login'))
 
-@app.route('/login')
-def login_index():
-    return redirect(url_for('my_account' if current_user.is_authenticated else 'login'))
+# @app.route('/login')
+# def login_index():
+#     return redirect(url_for('my_account' if current_user.is_authenticated else 'login'))
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
