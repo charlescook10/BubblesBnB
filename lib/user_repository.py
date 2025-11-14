@@ -39,6 +39,9 @@ class UserRepository:
 
     def find(self, id):
         rows = self._connection.execute(
-            'SELECT * from users WHERE id = %s', [id])
+            'SELECT id, name, username, password FROM users WHERE id = %s', [id])
+        if not rows:
+            return None # let caller handle "user not found"
+
         row = rows[0]
         return User(row["id"], row["name"], row["username"], row["password"])
