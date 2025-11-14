@@ -70,4 +70,3 @@ INSERT INTO availabilities (date, status, space_id) VALUES ('2026-04-14', 'Booke
 
 INSERT INTO bookings (user_id, availability_id) VALUES (2, 3);
 INSERT INTO bookings (user_id, availability_id) VALUES (1, 6);
-INSERT INTO bookings (user_id, availability_id) VALUES (2, 8);
